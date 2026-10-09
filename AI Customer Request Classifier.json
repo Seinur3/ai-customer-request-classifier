@@ -1,0 +1,395 @@
+{
+  "name": "AI Customer Request Classifier",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1801b7b1-98b5-41c3-a834-b9fad47a9d41",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e77b9b3a-ed6d-4226-81c8-55b1c0a505d0",
+              "name": "customerMessage",
+              "value": "Dobrý den, včera jsem zaplatil splátku, ale platba se stále nezobrazuje v klientské zóně.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1f2a3420-7517-4c20-8ada-fd39a61f1307",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.customerMessage }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "PAYMENT",
+              "description": "Questions about payments, installments, balances and missing transactions"
+            },
+            {
+              "category": "DOCUMENTS",
+              "description": "Submitted documents, identity cards, bank statements and document verification"
+            },
+            {
+              "category": "COMPLAINT",
+              "description": "Complaints, dissatisfaction and requests to escalate an issue"
+            },
+            {
+              "category": "OTHER",
+              "description": "Requests that do not match the other categories"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f0d8d6ab-5f22-4c5f-87bc-13ed9303336e",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        400
+      ],
+      "id": "d4812638-b928-46bc-aad3-fd37edd2e391",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WfsSNzjFB6DxBXmg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c241565b-c7d9-4384-a69e-7d643ae6730e",
+              "name": "department",
+              "value": "Finance",
+              "type": "string"
+            },
+            {
+              "id": "e58dc59e-b444-4adb-959d-03696625e9fb",
+              "name": "status",
+              "value": "Ready for review",
+              "type": "string"
+            },
+            {
+              "id": "6113e07a-60c1-49a8-a953-02c453820e04",
+              "name": "category ",
+              "value": "PAYMENT",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        832,
+        -128
+      ],
+      "id": "d046558d-fa32-4acd-b3bc-83b4bb6f4f27",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "79b6dce9-09ba-452a-a08e-f0610bcd756e",
+              "name": "department",
+              "value": "Documents",
+              "type": "string"
+            },
+            {
+              "id": "6801d316-3f47-4fd8-8b8c-b65dd46c5213",
+              "name": "status",
+              "value": "Ready for review",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        960,
+        48
+      ],
+      "id": "244020c2-a55b-4d21-adf5-d75fb4f26948",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22a8214d-0e2a-4feb-96de-513a68b0d55f",
+              "name": "department",
+              "value": "Customer Support",
+              "type": "string"
+            },
+            {
+              "id": "b294a5b7-f17a-46f9-9df2-dfad4e5ac934",
+              "name": "status",
+              "value": "Escalation required",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        832,
+        192
+      ],
+      "id": "57cd275c-aade-4214-8f19-97d2d85e2094",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ce2d1092-572a-40e6-a008-af5f2aa847d3",
+              "name": "department",
+              "value": "Manual Review",
+              "type": "string"
+            },
+            {
+              "id": "b6ab13a4-0165-49ed-8575-7a562fe7a091",
+              "name": "status",
+              "value": "Needs classification",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        800,
+        384
+      ],
+      "id": "7a5f23d2-7cc5-4cc8-80ce-c1a143d8f84a",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1xR1IOGXG43GvyyDeIBgm8gXRKbbPUTUeDSefwHQIFxc/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Лист1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "customerMessage": "={{ $json.customerMessage }}",
+            "category": "={{ $json['category ']}}",
+            "department": "={{ $json.department }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customerMessage",
+              "displayName": "customerMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "department",
+              "displayName": "department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        -128
+      ],
+      "id": "bd166cdc-87f4-4f09-bfc8-c7af2a37c753",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KiMUPR1IWgoSfI9i",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2425dfa6-834e-45fd-a6fb-f62965657a69",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e560819ae5574ad37fc139688023a48a8465968a37af812a1a07b1acb1799cf3"
+  },
+  "nodeGroups": [],
+  "id": "g9cpXxeXQGIdc0XY",
+  "tags": []
+}
